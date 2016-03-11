@@ -1,0 +1,36 @@
+	This script takes storm parameters and uses them to produce a model
+of the azimuthal wind speed of the hurricane.
+The details of the model can be found in a paper located at:
+(journals.ametsoc.org/doi/abs/10.1175/JAS-D-15-0014.1) 
+The core of the scripts functionality is in the function solve_hurricane
+which determines the values of unknown storm parameters and uses them to
+generate a final plot of the wind profile.
+
+Runthrough of the code:
+	 This code takes as unknown the following model parameters:
+r_max: the radius of maximum azimuthal wind velocity.
+r_0: the outer boundary radius of the hurricane.
+r_a: the radius at which the model changes regime from the inner
+     convection-dominated region to the outer convection-free region.
+v_a: the velocity at r_a
+
+     	 In its present state, this code makes the following assumptions:
+C_k/C_d = 1: This assumption is not made because it is believed to be
+	     accurate; it definitely isn't.  However, at present I don't
+	     have a way to determine the value of these parameters, and
+	     this assumption makes it possible to solve for r_max analytically.
+
+chi does not
+vary with r: The paper which describes this model makes this assumption
+    	     throughout.  
+
+When calling solve_hurricane, the code follows this procedure:
+
+     First it calls solve_r_max to find the radius of maximum wind
+speed, which is a necessary parameter of the inner model.  It then uses
+a nested shooting method to determine r_a and r_0.  It guesses r_a, then
+uses a shooting method implemented in solve_r_0
+to find the correct value of r_0 such that the 
+wind speed at r_a matches for both the inner and outer models.
+Once it has deteremined both parameters, it has solved for all unknowns
+and uses these as model parameters in plot_velocity.
